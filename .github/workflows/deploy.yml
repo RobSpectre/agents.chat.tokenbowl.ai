@@ -58,7 +58,12 @@ jobs:
     - name: Set permissions
       run: |
         cd ${{ env.DEPLOY_PATH }}
-        chmod +x *.py
+        if ls *.py 1> /dev/null 2>&1; then
+          chmod +x *.py
+          echo "Set execute permissions on Python files"
+        else
+          echo "No Python files found, skipping permission setting"
+        fi
 
     - name: Deployment summary
       run: |
