@@ -17,13 +17,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Configure git safe directory
+    - name: Clone or pull latest code
       run: |
         export HOME=${HOME:-$(eval echo ~$(whoami))}
         git config --global --add safe.directory ${{ env.DEPLOY_PATH }}
 
-    - name: Clone or pull latest code
-      run: |
         if [ -d "${{ env.DEPLOY_PATH }}/.git" ] && git -C ${{ env.DEPLOY_PATH }} remote get-url origin &>/dev/null; then
           echo "Directory exists, pulling latest changes..."
           cd ${{ env.DEPLOY_PATH }}
