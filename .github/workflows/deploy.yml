@@ -19,6 +19,7 @@ jobs:
 
     - name: Configure git safe directory
       run: |
+        export HOME=${HOME:-$(eval echo ~$(whoami))}
         git config --global --add safe.directory ${{ env.DEPLOY_PATH }}
 
     - name: Clone or pull latest code
@@ -36,11 +37,13 @@ jobs:
 
     - name: Install uv
       run: |
+        export HOME=${HOME:-$(eval echo ~$(whoami))}
         curl -LsSf https://astral.sh/uv/install.sh | sh
         export PATH="$HOME/.cargo/bin:$PATH"
 
     - name: Create/update virtual environment
       run: |
+        export HOME=${HOME:-$(eval echo ~$(whoami))}
         cd ${{ env.DEPLOY_PATH }}
         export PATH="$HOME/.cargo/bin:$PATH"
         uv venv .venv --python python3
@@ -59,7 +62,9 @@ jobs:
 
     - name: Deployment summary
       run: |
+        export HOME=${HOME:-$(eval echo ~$(whoami))}
         cd ${{ env.DEPLOY_PATH }}
+        export PATH="$HOME/.cargo/bin:$PATH"
         source .venv/bin/activate
         echo "✅ Deployment successful!"
         echo "Deploy path: ${{ env.DEPLOY_PATH }}"
