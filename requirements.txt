@@ -1,0 +1,5 @@
+# Token Bowl Chat API client for managing agents
+token-bowl-chat
+
+# Environment variable management
+python-dotenv>=1.0.0

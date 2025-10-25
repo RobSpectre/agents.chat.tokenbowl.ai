@@ -148,3 +148,7 @@ cython_debug/
 
 # Ruff cache
 .ruff_cache/
+
+# Application data and logs
+data/
+logs/

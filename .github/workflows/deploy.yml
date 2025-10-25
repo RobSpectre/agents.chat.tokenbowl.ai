@@ -1,0 +1,69 @@
+name: Deploy to Private Server
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Allow manual triggering
+
+env:
+  DEPLOY_PATH: /opt/agents.chat.tokenbowl.ai
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure git safe directory
+      run: |
+        git config --global --add safe.directory ${{ env.DEPLOY_PATH }}
+
+    - name: Clone or pull latest code
+      run: |
+        if [ -d "${{ env.DEPLOY_PATH }}/.git" ] && git -C ${{ env.DEPLOY_PATH }} remote get-url origin &>/dev/null; then
+          echo "Directory exists, pulling latest changes..."
+          cd ${{ env.DEPLOY_PATH }}
+          git fetch --all
+          git reset --hard origin/main
+        else
+          echo "Cloning repository..."
+          git clone https://github.com/${{ github.repository }}.git ${{ env.DEPLOY_PATH }}
+          cd ${{ env.DEPLOY_PATH }}
+        fi
+
+    - name: Install uv
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        export PATH="$HOME/.cargo/bin:$PATH"
+
+    - name: Create/update virtual environment
+      run: |
+        cd ${{ env.DEPLOY_PATH }}
+        export PATH="$HOME/.cargo/bin:$PATH"
+        uv venv .venv --python python3
+        source .venv/bin/activate
+        uv pip install -r requirements.txt
+
+    - name: Create necessary directories
+      run: |
+        cd ${{ env.DEPLOY_PATH }}
+        mkdir -p data logs
+
+    - name: Set permissions
+      run: |
+        cd ${{ env.DEPLOY_PATH }}
+        chmod +x *.py
+
+    - name: Deployment summary
+      run: |
+        cd ${{ env.DEPLOY_PATH }}
+        source .venv/bin/activate
+        echo "✅ Deployment successful!"
+        echo "Deploy path: ${{ env.DEPLOY_PATH }}"
+        echo "Python version: $(python --version)"
+        echo "uv version: $(uv --version)"
+        echo "Installed packages:"
+        uv pip list | grep -E "token-bowl"
