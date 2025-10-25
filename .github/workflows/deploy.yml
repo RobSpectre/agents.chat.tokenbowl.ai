@@ -29,6 +29,13 @@ jobs:
           cd ${{ env.DEPLOY_PATH }}
           git fetch --all
           git reset --hard origin/main
+        elif [ -d "${{ env.DEPLOY_PATH }}" ]; then
+          echo "Directory exists but is not a git repo, initializing..."
+          cd ${{ env.DEPLOY_PATH }}
+          git init
+          git remote add origin https://github.com/${{ github.repository }}.git
+          git fetch --all
+          git reset --hard origin/main
         else
           echo "Cloning repository..."
           git clone https://github.com/${{ github.repository }}.git ${{ env.DEPLOY_PATH }}
