@@ -82,3 +82,9 @@ jobs:
         echo "uv version: $(uv --version)"
         echo "Installed packages:"
         uv pip list | grep -E "token-bowl"
+
+    - name: Restart services
+      run: |
+        echo "Restarting all supervisor services..."
+        supervisorctl restart all
+        echo "✅ Services restarted!"
