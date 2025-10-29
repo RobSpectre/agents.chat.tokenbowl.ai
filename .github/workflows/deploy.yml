@@ -86,5 +86,5 @@ jobs:
     - name: Restart services
       run: |
         echo "Restarting all supervisor services..."
-        supervisorctl restart all
+        sudo supervisorctl restart agents:* 
         echo "✅ Services restarted!"
